@@ -5,6 +5,7 @@
 ## Notes: Translates other races' messages to their own language
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
+## SavedVariablesPerCharacter: UC_Vars
 ## IconTexture: 135975
 
 UnCommon.lua

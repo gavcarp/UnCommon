@@ -1,6 +1,14 @@
+local addonName, addon = ...
+UC_Vars = { }
 local orace, prace, _ = UnitRace("player")
-print("|cff1eff00UnCommon|r loaded! Detected player race: "..orace)
 local pfaction, _ = UnitFactionGroup("player")
+
+local green, blue, red = "ff1eff00", "ff50a0e0", "ffe03040";
+local function UCPrint(msg)
+	print ("|cff1eff00UnCommon|r | "..msg)
+end
+
+------------------------------ Language Data ------------------------------
 
 local lang = {
 	["Human"] = "Common",
@@ -164,17 +172,17 @@ local translators = {
 	}
 }
 
+------------------------------ Translation Functions ------------------------------
+
 local function MatchCase(source, target)
 	if source:match("^%u+$") and #source > 1 then return target:upper() end
 	if source:match("^%u") then return target:sub(1,1):upper() .. target:sub(2):lower() end
 	return target:lower()
 end
 
+
 local function TranslateMessage(self, event, text, playerName, languageName, channelName, playerName2, specialFlags, zoneChannelID, channelIndex, channelBaseName, languageID, lineID, guid, ...)
-	--print("guid: "..guid)
-	--print("name: "..playerName)
 	_, _, _, srace, _, _, _ = GetPlayerInfoByGUID(guid)
-	--print("srace: "..srace)
 	
 	-- do nothing for same race, even if msg is in common
 	if srace == prace then
@@ -219,6 +227,129 @@ local function TranslateMessage(self, event, text, playerName, languageName, cha
 
 end
 
-ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", TranslateMessage)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", TranslateMessage)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", TranslateMessage)
+------------------------------ Setup ------------------------------
+
+local function AddFilters()
+	if UC_Vars.say then
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", TranslateMessage)
+	end
+	if UC_Vars.yell then
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", TranslateMessage)
+	end
+	if UC_Vars.channel then
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", TranslateMessage)
+	end
+	if UC_Vars.party then
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY", TranslateMessage)
+		ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID", TranslateMessage)
+	end
+end
+
+local function RemoveFilters()
+	ChatFrame_RemoveMessageEventFilter("CHAT_MSG_SAY", TranslateMessage)
+	ChatFrame_RemoveMessageEventFilter("CHAT_MSG_YELL", TranslateMessage)
+	ChatFrame_RemoveMessageEventFilter("CHAT_MSG_CHANNEL", TranslateMessage)
+	ChatFrame_RemoveMessageEventFilter("CHAT_MSG_PARTY", TranslateMessage)
+	ChatFrame_RemoveMessageEventFilter("CHAT_MSG_RAID", TranslateMessage)
+end
+
+local f = CreateFrame("Frame")
+f:RegisterEvent("ADDON_LOADED")
+f:SetScript("OnEvent", function(self, event, arg1)
+    if event == "ADDON_LOADED" and arg1 == addonName then
+        if next(UC_Vars) == nil then
+			UC_Vars = { enable = true, say = true, yell = true, channel = true, party = false }
+		end
+		if UC_Vars.enable then 
+			UCPrint("|cff50a0e0Enabled|r: |c"..(UC_Vars.say and blue or red).."Say|r |c"..(UC_Vars.yell and blue or red).."Yell|r |c"..(UC_Vars.channel and blue or red).."Channel|r |c"..(UC_Vars.party and blue or red).."Party/Raid|r")
+		else
+			UCPrint("|cffe03040Disabled|r")
+		end
+        self:UnregisterEvent("ADDON_LOADED")
+    end
+end)
+
+------------------------------ Slash Commands ------------------------------
+
+SLASH_UNCOMMON1 = "/uncommon"
+SLASH_UNCOMMON2 = "/uc"
+
+SlashCmdList["UNCOMMON"] = function(msg)
+	if msg == "enable" then
+		if UC_Vars.enable then
+			UCPrint("Already enabled!")
+		else
+			UC_Vars.enable = true
+			AddFilters()
+			UCPrint("|cff50a0e0Enabled|r")
+		end
+	elseif msg == "disable" then
+		if not UC_Vars.enable then
+			UCPrint("Already disabled!")
+		else
+			UC_Vars.enable = false
+			RemoveFilters()
+			UCPrint("|cffe03040Disabled|r")
+		end
+	elseif msg == "say" then
+		if UC_Vars.say then
+			UC_Vars.say = false
+			ChatFrame_RemoveMessageEventFilter("CHAT_MSG_SAY", TranslateMessage)
+			UCPrint("Say translation |cffe03040disabled|r")
+		else
+			UC_Vars.say = true
+			ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", TranslateMessage)
+			UCPrint("Say translation |cff50a0e0enabled|r")
+		end
+	elseif msg == "yell" then
+		if UC_Vars.yell then
+			UC_Vars.yell = false
+			ChatFrame_RemoveMessageEventFilter("CHAT_MSG_YELL", TranslateMessage)
+			UCPrint("Yell translation |cffe03040disabled|r")
+		else
+			UC_Vars.yell = true
+			ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", TranslateMessage)
+			UCPrint("Yell translation |cff50a0e0enabled|r")
+		end
+	elseif msg == "channel" then
+		if UC_Vars.channel then
+			UC_Vars.channel = false
+			ChatFrame_RemoveMessageEventFilter("CHAT_MSG_CHANNEL", TranslateMessage)
+			UCPrint("Channel translation |cffe03040disabled|r")
+		else
+			UC_Vars.channel = true
+			ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", TranslateMessage)
+			UCPrint("Channel translation |cff50a0e0enabled|r")
+		end
+	elseif msg == "party" then
+		if UC_Vars.party then
+			UC_Vars.party = false
+			ChatFrame_RemoveMessageEventFilter("CHAT_MSG_PARTY", TranslateMessage)
+			ChatFrame_RemoveMessageEventFilter("CHAT_MSG_RAID", TranslateMessage)
+			UCPrint("Party translation |cffe03040disabled|r")
+		else
+			UC_Vars.party = true
+			ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY", TranslateMessage)
+			ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID", TranslateMessage)
+			UCPrint("Party translation |cff50a0e0enabled|r")
+		end
+	elseif msg == "status" then
+		if UC_Vars.enable then 
+			UCPrint("|cff50a0e0Enabled|r: |c"..(UC_Vars.say and blue or red).."Say|r |c"..(UC_Vars.yell and blue or red).."Yell|r |c"..(UC_Vars.channel and blue or red).."Channel|r |c"..(UC_Vars.party and blue or red).."Party/Raid|r")
+		else
+			UCPrint("|cffe03040Disabled|r")
+		end
+	elseif msg == "help" or msg == "" then
+		UCPrint("Available commands:")
+		UCPrint("status        -- print addon status")
+		UCPrint("enable       -- enable addon")
+		UCPrint("disable      -- disable addon")
+		UCPrint("say            -- toggle say translations")
+		UCPrint("yell            -- toggle yell translations")
+		UCPrint("channel     -- toggle channel translations")
+		UCPrint("party         -- toggle party/raid translations")
+		UCPrint("help          -- show this message")
+	else
+		UCPrint("Unknown command, use /uc help for list of commands")
+	end
+end
