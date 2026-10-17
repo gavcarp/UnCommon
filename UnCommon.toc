@@ -1,0 +1,10 @@
+## Interface: 120100, 16001, 50504, 38001, 20506, 11509
+## Title: UnCommon
+## Author: .mage
+## Version: 0.1
+## Notes: Translates other races' messages to their own language
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## IconTexture: 135975
+
+UnCommon.lua

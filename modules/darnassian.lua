@@ -1,0 +1,19 @@
+NOCOMMON_Darnassian = {
+    [1] = {"A", "D", "E", "I", "N", "O"},
+    [2] = {"Al", "An", "Da", "Do", "Lo", "Ni", "No", "Ri", "Su"},
+    [3] = {"Ala", "Ano", "Anu", "Ash", "Dor", "Dur", "Fal", "Nei", "Nor", "Osa", "Tal", "Tur"},
+    [4] = {"Alah", "Aman", "Anar", "Andu", "Dath", "Dieb", "Diel", "Fulo", "Mush", "Rini", "Shar", "Thus"},
+    [5] = {"Adore", "Balah", "Bandu", "Eburi", "Fandu", "Ishnu", "Shano", "Shari", "Talah", "Terro", "Thera", "Turus"},
+    [6] = {"Asto're", "Belore", "Do'rah", "Dorini", "Ethala", "Falla", "Ishura", "Man'ar", "Neph'o", "Shando", "T'as'e", "U'phol"},
+    [7] = {"Al'shar", "Alah'ni", "Aman'ni", "Anoduna", "Dor'Ano", "Mush'al", "Shan're"},
+    [8] = {"D'ana'no", "Dal'dieb", "Dorithur", "Eraburis", "Il'amare", "Mandalas", "Thoribas"},
+    [9] = {"Banthalos", "Dath'anar", "Dune'adah", "Fala'andu", "Neph'anis", "Shari'fal", "Thori'dal"},
+    [10] = {"Ash'therod", "Dorados'no", "Isera'duna", "Shar'adore", "Thero'shan"},
+    [11] = {"Fandu'talah", "Shari'adune"},
+    [12] = {"Dor'ana'badu", "T'ase'mushal"},
+    [13] = {"U'phol'belore"},
+    [14] = {"Anu'dorannador", "Turus'il'amare"},
+    [15] = {"Asto're'dunadah", "Shindu'falla'na"},
+    [16] = {"Ando'eth'derador"},
+    [17] = {"Anu'dorinni'talah", "Esh'thero'mannash", "Thoribas'no'thera"}
+}
